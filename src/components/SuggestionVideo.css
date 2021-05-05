@@ -1,34 +1,14 @@
-.App {
-  text-align: center;
-}
-/* p {
-  position: absolute;
-  top: 10%;
-  left: 35%;
-} */
-.youtubeLogo {
-  margin-top: 10px;
-  max-height: 70px;
-  max-width: 70px;
-  margin-left: 150px;
-}
-.heading {
-  margin-top: 10px;
-  max-height: 70px;
-  max-width: 70px;
-  margin-left: 150px;
-}
-.myUL {
+.myULL {
   /* Remove default list styling */
   list-style-type: none;
   position: absolute;
-  top: 13%;
-  left: 35%;
+  top: 20%;
+  left: 75%;
   padding: 0;
   margin: 0;
 }
 
-.myUL li {
+.myULL li {
   border: 1px solid #ddd; /* Add a border to all links */
   width: 260px;
   margin-top: -1px; /* Prevent double borders */
@@ -41,6 +21,6 @@
   cursor: pointer;
 }
 
-.myUL li:not(.header) {
+.myULL li:not(.header) {
   background-color: #eee; /* Add a hover effect to all links, except for headers */
 }
