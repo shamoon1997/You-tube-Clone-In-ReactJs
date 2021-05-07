@@ -11,7 +11,7 @@ body {
   display: flex;
 }
 
-.searchTerm {
+.search-term {
   width: 100%;
   border: 3px solid #00b4cc;
   border-right: none;
@@ -22,11 +22,11 @@ body {
   color: #9dbfaf;
 }
 
-.searchTerm:focus {
+.search-term:focus {
   color: #00b4cc;
 }
 
-.searchButton {
+.search-button {
   width: 40px;
   height: 36px;
   border: 1px solid #00b4cc;

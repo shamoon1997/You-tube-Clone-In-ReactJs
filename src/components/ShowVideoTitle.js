@@ -1,15 +1,13 @@
 import React from "react";
 import "./ShowVideoTitle.css";
-function ShowVideoTitle(props) {
-  if (props.videoTitle) {
-    return (
-      <div className="videoTitle">
-        <h4>Title: {props.videoTitle}</h4>
-      </div>
-    );
-  } else {
-    return <div></div>;
-  }
+function ShowVideoTitle({ videoTitle }) {
+  return videoTitle ? (
+    <div className="video-title">
+      <h4>Title: {videoTitle}</h4>
+    </div>
+  ) : (
+    <div></div>
+  );
 }
 
 export default ShowVideoTitle;
