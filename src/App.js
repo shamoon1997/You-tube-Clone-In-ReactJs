@@ -1,27 +1,26 @@
+import { useState } from "react";
 import "./App.css";
 import SearchBox from "./components/SearchBox";
-import ShowVideo from "./components/ShowVideo";
-import SuggestionsVideo from "./components/SuggestionsVideo";
-import ShowVideoTitle from "./components/ShowVideoTitle";
-import APIcaller from "./utilities/APICaller.js";
-import { useState } from "react";
+import VideoPlayer from "./components/VideoPlayer";
+import SuggestionList from "./components/SuggestionList";
+import getVideos from "./utilities/getVideos";
 
 function App() {
-  const [searchItems, setsearchItems] = useState([]);
+  const [searchVideos, setSearchVideos] = useState([]);
   const [suggestionVideos, setSuggestionVideos] = useState([]);
-  const [videoId, setvideoId] = useState();
-  const [maxResults, setmaxResults] = useState(10);
-  const [searchedItem, setsearchedItem] = useState();
-  const [videoTitle, setvideoTitle] = useState();
-  async function getSearchItem(searchItem) {
-    setsearchedItem(searchItem);
-    setsearchItems([...(await APIcaller(searchItem))]);
+  const [videoId, setVideoId] = useState();
+  const [maxResults, setMaxResults] = useState(10);
+  const [searchedVideo, setSearchedVideo] = useState();
+  const [videoTitle, setVideoTitle] = useState();
+  async function fetchSearchVideo(searchVideo) {
+    setSearchedVideo(searchVideo);
+    setSearchVideos([...(await getVideos(searchVideo))]);
   }
-  function getSelectedVideo(selectedVideo) {
-    setvideoTitle(selectedVideo.title);
-    setSuggestionVideos([...searchItems]);
-    setvideoId(selectedVideo.videoId);
-    setsearchItems([]);
+  function fetchSelectedVideo(selectedVideo) {
+    setVideoTitle(selectedVideo.title);
+    setSuggestionVideos([...searchVideos]);
+    setVideoId(selectedVideo.videoId);
+    setSearchVideos([]);
   }
   const debounce = (fn, delay) => {
     let timeoutID;
@@ -34,34 +33,42 @@ function App() {
       }, delay);
     };
   };
-  function getSelectedSuggestionVideo(SelectedVideo) {
-    setvideoTitle(SelectedVideo.title);
-    setvideoId(SelectedVideo.videoId);
+  function setSelectedSuggestionVideo(SelectedVideo) {
+    setVideoTitle(SelectedVideo.title);
+    setVideoId(SelectedVideo.videoId);
   }
-  async function getMoreSuggestionVideos() {
-    setmaxResults(maxResults + 5);
-    setSuggestionVideos([...(await APIcaller(searchedItem, maxResults))]);
+  async function fetchMoreSuggestionVideos() {
+    setMaxResults(maxResults + 5);
+    setSuggestionVideos([...(await getVideos(searchedVideo, maxResults))]);
   }
   return (
     <div>
-      <img src="/youtube.png" alt="Youtube" className="youtubeLogo"></img>
+      <img src="/youtube.png" alt="Youtube" className="youtube-logo"></img>
       <p className="heading">My mini Youtube</p>
       <div className="app">
-        <SearchBox getSearchItem={debounce(getSearchItem, 2000)}></SearchBox>
+        <SearchBox
+          fetchSearchVideo={debounce(fetchSearchVideo, 2000)}
+        ></SearchBox>
         <ul className="search-item">
-          {searchItems.map((item, i) => (
-            <li key={item.videoId} onClick={() => getSelectedVideo(item)}>
+          {searchVideos.map((item, i) => (
+            <li key={item.videoId} onClick={() => fetchSelectedVideo(item)}>
               {item.title}
             </li>
           ))}
         </ul>
-        <ShowVideo videoId={videoId}></ShowVideo>
-        <ShowVideoTitle videoTitle={videoTitle}></ShowVideoTitle>
-        <SuggestionsVideo
-          suggestionVideos={suggestionVideos}
-          selectedSuggestionVideo={getSelectedSuggestionVideo}
-          moreSuggestionVideos={getMoreSuggestionVideos}
-        ></SuggestionsVideo>
+        {videoId && videoTitle && (
+          <>
+            <VideoPlayer
+              videoId={videoId}
+              videoTitle={videoTitle}
+            ></VideoPlayer>
+            <SuggestionList
+              suggestionVideos={suggestionVideos}
+              setSelectedSuggestionVideo={setSelectedSuggestionVideo}
+              fetchMoreSuggestionVideos={fetchMoreSuggestionVideos}
+            ></SuggestionList>
+          </>
+        )}
       </div>
     </div>
   );

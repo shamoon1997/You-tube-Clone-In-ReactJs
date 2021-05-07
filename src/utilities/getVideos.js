@@ -1,4 +1,4 @@
-const APIcaller = async function (searchedItem, maxResults = 5) {
+const getVideos = async function (searchedItem, maxResults = 5) {
   let items = [];
   let url = `https://youtube.googleapis.com/youtube/v3/search?maxResults=${maxResults}&part=snippet&q=${searchedItem}&type=video&key=${process.env.REACT_APP_API_KEY}`;
   await fetch(url)
@@ -14,4 +14,4 @@ const APIcaller = async function (searchedItem, maxResults = 5) {
     });
   return items;
 };
-export default APIcaller;
+export default getVideos;
