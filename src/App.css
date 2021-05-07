@@ -1,4 +1,4 @@
-.App {
+.app {
   text-align: center;
 }
 /* p {
@@ -18,7 +18,7 @@
   max-width: 70px;
   margin-left: 150px;
 }
-.myUL {
+.search-item {
   /* Remove default list styling */
   list-style-type: none;
   position: absolute;
@@ -28,7 +28,7 @@
   margin: 0;
 }
 
-.myUL li {
+.search-item li {
   border: 1px solid #ddd; /* Add a border to all links */
   width: 260px;
   margin-top: -1px; /* Prevent double borders */
@@ -41,6 +41,6 @@
   cursor: pointer;
 }
 
-.myUL li:not(.header) {
+.search-item li:not(.header) {
   background-color: #eee; /* Add a hover effect to all links, except for headers */
 }

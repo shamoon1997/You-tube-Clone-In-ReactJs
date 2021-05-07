@@ -3,47 +3,25 @@ import SearchBox from "./components/SearchBox";
 import ShowVideo from "./components/ShowVideo";
 import SuggestionsVideo from "./components/SuggestionsVideo";
 import ShowVideoTitle from "./components/ShowVideoTitle";
+import APIcaller from "./utilities/APICaller.js";
 import { useState } from "react";
 
-import youtube from "./youtube.png";
-
 function App() {
-  let items = [];
   const [searchItems, setsearchItems] = useState([]);
-  const [selectedVideo, setselectedVideo] = useState([]);
-  const [suggestionVideo, setsuggestionVideo] = useState([]);
+  const [suggestionVideos, setSuggestionVideos] = useState([]);
   const [videoId, setvideoId] = useState();
-  const [maxResult, setmaxResult] = useState(10);
+  const [maxResults, setmaxResults] = useState(10);
   const [searchedItem, setsearchedItem] = useState();
   const [videoTitle, setvideoTitle] = useState();
-  function getSearchItem(searchItem) {
+  async function getSearchItem(searchItem) {
     setsearchedItem(searchItem);
-    if (selectedVideo.length > 0) {
-      setselectedVideo([]);
-    }
-    items = [];
-    setsearchItems([...items]);
-    let url = `https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=${searchItem}&type=video&key=${process.env.REACT_APP_API_KEY}`;
-    fetch(url)
-      .then((response) => response.json())
-      .then((data) => {
-        data.items.forEach((element) => {
-          items.push(element.snippet.title);
-          setsearchItems([...items]);
-        });
-      });
+    setsearchItems([...(await APIcaller(searchItem))]);
   }
-  function getSelectedVideo(item) {
-    setvideoTitle(item);
-    setsuggestionVideo([...searchItems]);
-    items = [];
-    setsearchItems([...items]);
-    let url = `https://youtube.googleapis.com/youtube/v3/search?maxResults=1&q=${item}&key=${process.env.REACT_APP_API_KEY}`;
-    fetch(url)
-      .then((response) => response.json())
-      .then((data) => {
-        setvideoId(data.items[0].id.videoId);
-      });
+  function getSelectedVideo(selectedVideo) {
+    setvideoTitle(selectedVideo.title);
+    setSuggestionVideos([...searchItems]);
+    setvideoId(selectedVideo.videoId);
+    setsearchItems([]);
   }
   const debounce = (fn, delay) => {
     let timeoutID;
@@ -56,46 +34,33 @@ function App() {
       }, delay);
     };
   };
-  function SelectedSuggestionVideo(SelectedVideo) {
-    setvideoTitle(SelectedVideo);
-    let url = `https://youtube.googleapis.com/youtube/v3/search?maxResults=1&q=${SelectedVideo}&key=${process.env.REACT_APP_API_KEY}`;
-    fetch(url)
-      .then((response) => response.json())
-      .then((data) => {
-        setvideoId(data.items[0].id.videoId);
-      });
+  function getSelectedSuggestionVideo(SelectedVideo) {
+    setvideoTitle(SelectedVideo.title);
+    setvideoId(SelectedVideo.videoId);
   }
-  function moreSuggestionVideos() {
-    setmaxResult(maxResult + 5);
-    let url = `https://youtube.googleapis.com/youtube/v3/search?maxResults=${maxResult}&part=snippet&q=${searchedItem}&type=video&key=${process.env.REACT_APP_API_KEY}`;
-    fetch(url)
-      .then((response) => response.json())
-      .then((data) => {
-        data.items.forEach((element) => {
-          items.push(element.snippet.title);
-          setsuggestionVideo([...items]);
-        });
-      });
+  async function getMoreSuggestionVideos() {
+    setmaxResults(maxResults + 5);
+    setSuggestionVideos([...(await APIcaller(searchedItem, maxResults))]);
   }
   return (
     <div>
-      <img src={youtube} alt="Youtube" className="youtubeLogo"></img>
+      <img src="/youtube.png" alt="Youtube" className="youtubeLogo"></img>
       <p className="heading">My mini Youtube</p>
-      <div className="App">
+      <div className="app">
         <SearchBox getSearchItem={debounce(getSearchItem, 2000)}></SearchBox>
-        <ul className="myUL">
+        <ul className="search-item">
           {searchItems.map((item, i) => (
-            <li key={item} onClick={() => getSelectedVideo(item)}>
-              {item}
+            <li key={item.videoId} onClick={() => getSelectedVideo(item)}>
+              {item.title}
             </li>
           ))}
         </ul>
         <ShowVideo videoId={videoId}></ShowVideo>
         <ShowVideoTitle videoTitle={videoTitle}></ShowVideoTitle>
         <SuggestionsVideo
-          suggestionVideo={suggestionVideo}
-          SelectedSuggestionVideo={SelectedSuggestionVideo}
-          moreSuggestionVideos={moreSuggestionVideos}
+          suggestionVideos={suggestionVideos}
+          selectedSuggestionVideo={getSelectedSuggestionVideo}
+          moreSuggestionVideos={getMoreSuggestionVideos}
         ></SuggestionsVideo>
       </div>
     </div>

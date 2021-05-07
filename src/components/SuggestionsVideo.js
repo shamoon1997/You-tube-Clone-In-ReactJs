@@ -1,24 +1,27 @@
 import React from "react";
 import "./SuggestionVideo.css";
 function SuggestionsVideo(props) {
-  if (props.suggestionVideo.length === 0) {
-    return <div></div>;
-  } else {
-    return (
-      <div>
-        <ul className="myULL">
-          {props.suggestionVideo.map((item, i) => (
-            <li key={item} onClick={() => {
-                props.SelectedSuggestionVideo(item)
-                }}>
-              {item}
-            </li>
-          ))}
-          <button onClick={()=> props.moreSuggestionVideos()}>More Suggestions</button>
-        </ul>
-      </div>
-    );
-  }
+  return props.suggestionVideos.length ? (
+    <div>
+      <ul className="suggestion-list">
+        {props.suggestionVideos.map((item, i) => (
+          <li
+            key={item.videoId}
+            onClick={() => {
+              props.selectedSuggestionVideo(item);
+            }}
+          >
+            {item.title}
+          </li>
+        ))}
+        <button onClick={() => props.moreSuggestionVideos()}>
+          More Suggestions
+        </button>
+      </ul>
+    </div>
+  ) : (
+    <div></div>
+  );
 }
 
 export default SuggestionsVideo;
